@@ -24,6 +24,10 @@ if exist "%USERPROFILE%\anaconda3\python.exe" (
     set PYTHON_CMD="%USERPROFILE%\AppData\Local\Programs\Python\Python310\python.exe"
 )
 
+echo.
+echo [INFO] Detected Python command: %PYTHON_CMD%
+echo.
+
 %PYTHON_CMD% main.py
 if %errorlevel% neq 0 (
     echo.
