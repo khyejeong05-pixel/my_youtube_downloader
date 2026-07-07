@@ -68,8 +68,10 @@ class YouTubeDownloaderApp:
         # 설정 불러오기
         self.settings = self.load_settings()
         
-        # ffmpeg 감지 여부
-        self.ffmpeg_available = shutil.which('ffmpeg') is not None
+        # ffmpeg 감지 여부 (시스템 PATH 및 로컬 실행 파일 체크)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        has_local_ffmpeg = os.path.exists(os.path.join(script_dir, 'ffmpeg.exe')) or os.path.exists(os.path.join(os.getcwd(), 'ffmpeg.exe'))
+        self.ffmpeg_available = (shutil.which('ffmpeg') is not None) or has_local_ffmpeg
         
         # UI 위젯 그리기
         self.create_widgets()
@@ -598,6 +600,13 @@ class YouTubeDownloaderApp:
             'windowsfilenames': True,  # 윈도우 특수문자 치환 활성화
             **format_opts
         }
+        
+        # 로컬 ffmpeg 폴더 위치 지정
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        if os.path.exists(os.path.join(script_dir, 'ffmpeg.exe')):
+            ydl_opts['ffmpeg_location'] = script_dir
+        elif os.path.exists(os.path.join(os.getcwd(), 'ffmpeg.exe')):
+            ydl_opts['ffmpeg_location'] = os.getcwd()
         
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
